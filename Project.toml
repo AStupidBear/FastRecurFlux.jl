@@ -3,8 +3,12 @@ uuid = "588c45af-af6b-483f-b667-6e294e895986"
 authors = ["Yao Lu <luyaocns@gmail.com> and contributors"]
 version = "0.1.0"
 
+[deps]
+Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+
 [compat]
 julia = "1"
+Flux = "0.10"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
