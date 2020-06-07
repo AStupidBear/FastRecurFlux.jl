@@ -7,5 +7,5 @@ end
 
 Tracker.@grad function vmap(::typeof(tanh), x)
     y = vmap(tanh, Flux.data(x))
-    y, Δ -> (nothing, Δ .* (1 .- y).^2)
+    y, Δ -> (nothing, Δ .* (1 .- y.^2))
 end
