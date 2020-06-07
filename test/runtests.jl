@@ -20,10 +20,11 @@ using Test
             end
             return l / length(xs)
         end
+        ps = Flux.params(model)
+        data = repeat([(x, y)], 100)
         opt = ADAM(1e-3, (0.9, 0.999))
         cb = () -> Flux.reset!(model)
-        data = repeat([(x, y)], 100)
-        Flux.@epochs 10 Flux.train!(loss, params(model), data, opt, cb = cb)
+        Flux.@epochs 10 Flux.train!(loss, ps, data, opt, cb = cb)
         @test loss(x, y) < 0.01
     end
 end
