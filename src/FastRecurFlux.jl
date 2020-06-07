@@ -1,6 +1,6 @@
 module FastRecurFlux
 
-using Flux
+using Flux, LoopVectorization
 
 using Flux: LSTMCell, GRUCell, gate
 
@@ -25,5 +25,14 @@ function (m::GRUCell)(h, x)
     h′ = (1 .- z).*h̃ .+ z.*h
     return h′, h′
 end
+
+function Flux.NNlib.σ(x::LoopVectorization.SLEEFPirates.FloatType)
+    t = exp(-abs(x))
+    LoopVectorization.vifelse(x ≥ 0, inv(one(t) + t), t / (one(t) + t))
+end
+
+for f in (:σ, :tanh)
+    @eval Base.broadcasted(::typeof($f), x::AbstractArray{T, N}) where {T <: Union{Float64, Float32}, N} = vmap($f, x)
+end 
 
 end
