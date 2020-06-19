@@ -1,8 +1,10 @@
 module FastRecurFlux
 
 using Flux, LoopVectorization, Requires
-
 using Flux: LSTMCell, GRUCell, gate
+using Gaius: blocked_mul, MatTypes, VecTypes
+
+Base.:*(A::MatTypes, B::Union{MatTypes, VecTypes}) = blocked_mul(A, B)
 
 function (m::LSTMCell)((h, c), x)
     b, o = m.b, size(h, 1)
