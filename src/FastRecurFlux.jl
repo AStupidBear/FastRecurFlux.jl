@@ -1,8 +1,20 @@
 module FastRecurFlux
 
-using Flux, LoopVectorization, Requires
+using Flux, LoopVectorization, PaddedMatrices, Requires
 
 using Flux: LSTMCell, GRUCell, gate
+
+MatTypesC{T} = Union{Matrix{T}, SubArray{T, 2, <: AbstractArray}}
+MatTypesR{T} = Union{Adjoint{T, <: MatTypesC{T}}, Transpose{T, <: MatTypesC{T}}}
+MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
+VecTypes{T} = Union{Vector{T}, SubArray{T, 1, <: Array}}
+
+function Base.:*(A::MatTypes, B::Union{MatTypes, VecTypes})
+    T = promote_type(eltype(A), eltype(B))
+    C = Matrix{T}(undef, size(A,1), size(B,2))
+    PaddedMatrices.jmul!(C, A, B)
+    return C
+end
 
 function (m::LSTMCell)((h, c), x)
     b, o = m.b, size(h, 1)

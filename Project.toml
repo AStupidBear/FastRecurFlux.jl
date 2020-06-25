@@ -1,16 +1,18 @@
 name = "FastRecurFlux"
 uuid = "588c45af-af6b-483f-b667-6e294e895986"
 authors = ["Yao Lu <luyaocns@gmail.com> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
 LoopVectorization = "bdcacae8-1622-11e9-2a5c-532679323890"
+PaddedMatrices = "aaaacae8-1622-11e9-2a5c-532679323890"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
 
 [compat]
 Flux = "0.10"
-LoopVectorization = "0.8.3"
+LoopVectorization = "0.8"
+PaddedMatrices = "0.1"
 Requires = "1"
 julia = "1.1"
 
