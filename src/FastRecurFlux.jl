@@ -13,7 +13,19 @@ MatTypesR{T} = Union{Adjoint{T, <: MatTypesC{T}}, Transpose{T, <: MatTypesC{T}}}
 MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
 VecTypes{T} = Union{Vector{T}, SubArray{T, 1, <: Array}}
 
-function Base.:*(A::TA, B::TB) where {T <: MatTypes, TB <: Union{MatTypes, VecTypes}}
+function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: MatTypes{T}}
+    C = Matrix{T}(undef, size(A, 1), size(B, 2))
+    PaddedMatrices.jmul!(C, A, B)
+    return C
+end
+
+function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: VecTypes{T}}
+    C = Matrix{T}(undef, size(A, 1), 1)
+    PaddedMatrices.jmul!(C, A, reshape(B, :, 1))
+    return vec(C)
+end
+
+function Base.:*(A::TA, B::TB) where {TA <: MatTypes, TB <: Union{MatTypes, VecTypes}}
     T = promote_type(eltype(A), eltype(B))
     C = Matrix{T}(undef, size(A,1), size(B,2))
     PaddedMatrices.jmul!(C, A, B)
