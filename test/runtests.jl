@@ -10,6 +10,7 @@ using Test
     y = mean(x, dims = 1)
     rand(10, 10) * rand(1, 10)'
     rand(10, 10)' * rand(10)
+    rand(10, 10) * rand(10)
     for layer in (GRU, LSTM)
         model = Chain(layer(10, 100), layer(100, 1))
         function loss(x, y)

@@ -25,11 +25,10 @@ function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB 
     return vec(C)
 end
 
-function Base.:*(A::TA, B::TB) where {TA <: MatTypes, TB <: Union{MatTypes, VecTypes}}
-    T = promote_type(eltype(A), eltype(B))
-    C = Matrix{T}(undef, size(A,1), size(B,2))
-    PaddedMatrices.jmul!(C, A, B)
-    return C
+function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: Matrix{T}, TB <: VecTypes{T}}
+    C = Matrix{T}(undef, size(A, 1), 1)
+    PaddedMatrices.jmul!(C, A, reshape(B, :, 1))
+    return vec(C)
 end
 
 function (m::LSTMCell)((h, c), x)
