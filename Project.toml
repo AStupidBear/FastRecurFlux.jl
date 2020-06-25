@@ -5,6 +5,7 @@ version = "0.1.2"
 
 [deps]
 Flux = "587475ba-b771-5e3f-ad9e-33799f191a9c"
+LinearAlgebra = "37e2e46d-f89d-539d-b4ee-838fcccc9c8e"
 LoopVectorization = "bdcacae8-1622-11e9-2a5c-532679323890"
 PaddedMatrices = "aaaacae8-1622-11e9-2a5c-532679323890"
 Requires = "ae029012-a4dd-5104-9daa-d747884805df"
