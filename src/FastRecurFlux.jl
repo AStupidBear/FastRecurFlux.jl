@@ -8,10 +8,12 @@ using Requires
 
 using Flux: LSTMCell, GRUCell, gate
 
-MatTypesC{T} = Union{Matrix{T}, SubArray{T, 2, <: AbstractArray}}
+SubMatrix{T} = SubArray{T, 2, <: AbstractArray{T}, Tuple{Vararg{AbstractUnitRange, N} where N}, true}
+MatTypesC{T} = Union{Matrix{T}, SubMatrix{T}}
 MatTypesR{T} = Union{Adjoint{T, <: MatTypesC{T}}, Transpose{T, <: MatTypesC{T}}}
 MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
-VecTypes{T} = Union{Vector{T}, SubArray{T, 1, <: Array}}
+SubVector{T} = SubArray{T, 1, <: AbstractArray{T}, Tuple{Vararg{AbstractUnitRange, N} where N}, true}
+VecTypes{T} = Union{Vector{T}, SubVector{T}}
 
 function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: MatTypes{T}}
     C = Matrix{T}(undef, size(A, 1), size(B, 2))
@@ -20,12 +22,6 @@ function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB 
 end
 
 function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: VecTypes{T}}
-    C = Matrix{T}(undef, size(A, 1), 1)
-    PaddedMatrices.jmul!(C, A, reshape(B, :, 1))
-    return vec(C)
-end
-
-function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: Matrix{T}, TB <: VecTypes{T}}
     C = Matrix{T}(undef, size(A, 1), 1)
     PaddedMatrices.jmul!(C, A, reshape(B, :, 1))
     return vec(C)
