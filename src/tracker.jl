@@ -7,11 +7,11 @@ Tracker.@grad function Base.broadcasted(::typeof(relu), x::Tracker.TrackedArray)
 end
 
 Tracker.@grad function vmap(::typeof(σ), x)
-    y = vmap(σ, Flux.data(x))
+    y = vmap(σ, Tracker.data(x))
     y, Δ -> (nothing, Δ .* (y .* (1 .- y)))
 end
 
 Tracker.@grad function vmap(::typeof(tanh), x)
-    y = vmap(tanh, Flux.data(x))
+    y = vmap(tanh, Tracker.data(x))
     y, Δ -> (nothing, Δ .* (1 .- y.^2))
 end
