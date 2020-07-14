@@ -15,6 +15,12 @@ MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
 SubVector{T} = SubArray{T, 1, <: AbstractArray{T}, Tuple{Vararg{AbstractUnitRange, N} where N}, true}
 VecTypes{T} = Union{Vector{T}, SubVector{T}}
 
+function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: Matrix{T}, TB <: Matrix{T}}
+    C = Matrix{T}(undef, size(A, 1), size(B, 2))
+    PaddedMatrices.jmul!(C, A, B)
+    return C
+end
+
 function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: MatTypes{T}}
     C = Matrix{T}(undef, size(A, 1), size(B, 2))
     PaddedMatrices.jmul!(C, A, B)
