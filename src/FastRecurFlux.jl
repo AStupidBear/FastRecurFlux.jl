@@ -55,6 +55,15 @@ function (m::GRUCell)(h, x)
     return h′, h′
 end
 
+function Flux.NNlib.σ(x::LoopVectorization.SLEEFPirates.FloatType)
+    t = exp(-abs(x))
+    LoopVectorization.vifelse(x ≥ 0, inv(one(t) + t), t / (one(t) + t))
+end
+
+for f in (:σ, :tanh)
+    @eval Base.broadcasted(::typeof($f), x::AbstractArray{T, N}) where {T, N} = vmap($f, x)
+end
+
 function __init__()
     @require Tracker="9f7883ad-71c0-57eb-9f7f-b5c9e6d3789c" include("tracker.jl")
     @require ReverseDiff="37e2e3b7-166d-5795-8a7a-e32c996b4267" include("reversediff.jl")
