@@ -15,22 +15,21 @@ MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
 SubVector{T} = SubArray{T, 1, <: AbstractArray{T}, Tuple{Vararg{AbstractUnitRange, N} where N}, true}
 VecTypes{T} = Union{Vector{T}, SubVector{T}}
 
-function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: Matrix{T}, TB <: Matrix{T}}
-    C = Matrix{T}(undef, size(A, 1), size(B, 2))
-    PaddedMatrices.jmul!(C, A, B)
+function mul(A, B)
+    M, N, K = size(A, 1), size(A, 2), size(B, 2)
+    C = Matrix{T}(undef, M, K)
+    if M * N * K < 256^3
+        PaddedMatrices.jmul!(C, A, B)
+    else
+        LinearAlgebra.mul!(C, A, B)
+    end
     return C
 end
 
-function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: MatTypes{T}}
-    C = Matrix{T}(undef, size(A, 1), size(B, 2))
-    PaddedMatrices.jmul!(C, A, B)
-    return C
-end
-
-function Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: VecTypes{T}}
-    C = Matrix{T}(undef, size(A, 1), 1)
-    PaddedMatrices.jmul!(C, A, reshape(B, :, 1))
-    return vec(C)
+@static if Sys.ARCH == :x86_64
+    Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: Matrix{T}, TB <: Matrix{T}} = mul(A, B)
+    Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: MatTypes{T}} = mul(A, B)
+    Base.:*(A::TA, B::TB) where {T <: AbstractFloat, TA <: MatTypes{T}, TB <: VecTypes{T}} = vec(mul(A, reshape(B, :, 1)))
 end
 
 function (m::LSTMCell)((h, c), x)
