@@ -15,7 +15,7 @@ MatTypes{T} = Union{MatTypesC{T}, MatTypesR{T}}
 SubVector{T} = SubArray{T, 1, <: AbstractArray{T}, Tuple{Vararg{AbstractUnitRange, N} where N}, true}
 VecTypes{T} = Union{Vector{T}, SubVector{T}}
 
-function mul(A, B)
+function mul(A::AbstractArray{T}, B::AbstractArray{T}) where T
     M, N, K = size(A, 1), size(A, 2), size(B, 2)
     C = Matrix{T}(undef, M, K)
     if M * N * K < 256^3
