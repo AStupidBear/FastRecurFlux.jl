@@ -56,7 +56,7 @@ end
 
 function Flux.NNlib.σ(x::LoopVectorization.SLEEFPirates.FloatType)
     t = exp(-abs(x))
-    LoopVectorization.vifelse(x ≥ 0, inv(one(t) + t), t / (one(t) + t))
+    LoopVectorization.ifelse(x ≥ 0, inv(one(t) + t), t / (one(t) + t))
 end
 
 function __init__()
